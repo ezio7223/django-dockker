@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-deployment
+  labels:
+    app: django-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-deployment
+  template:
+    metadata:
+      labels:
+        app: django-deployment
+    spec:
+      containers:
+      - name: python-app
+        image: ezio7223/python-django-app:latest
+        ports:
+        - containerPort: 8000
+
+
+

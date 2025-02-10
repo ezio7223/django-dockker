@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: python-app
-        image: ezio7223/python-django-app:replaceImageTag
+        image: ezio7223/python-django-app:6
         ports:
         - containerPort: 8000
 

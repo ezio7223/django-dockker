@@ -13,7 +13,10 @@ pipeline {
         stage('Build Docker'){
             steps{
                 script{
+                    withCredentials([string(credentialsId: 'dockerhub', variable: 'DOCKER_TOKEN')]) {
                     sh '''
+                    echo "Logging into Docker Hub..."
+                    echo "$DOCKER_TOKEN" | docker login -u "ezio7223" --password-stdin
                     echo 'Buid Docker Image'
                     docker build -t ezio7223/pythontest-django-app:${BUILD_NUMBER} .
                     '''
@@ -37,13 +40,15 @@ pipeline {
                 script{
                     withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                     sh '''
-                    cat deployment.yaml
+                    echo "deployment.yaml"
                     sed -i 's|replaceImageTag|'"${BUILD_NUMBER}"'|g' deployment.yaml
                     cat deployment.yaml
+                    git config --global user.email "kpsafwan10@gmail.com"
+                    git config --global user.name "Jenkins"
                     git add deployment.yaml
                     git commit -m 'Updated the deploy yaml | Jenkins Pipeline'
                     git remote -v
-                    git push https://github.com/ezio7223/django-dockker HEAD:main
+                    git push https://ezio7223:${GITHUB_TOKEN}@github.com/ezio7223/django-dockker HEAD:main
                         '''
                     }
                 }

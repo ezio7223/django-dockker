@@ -41,12 +41,12 @@ pipeline {
                 script{
                     withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                     sh '''
-                    echo "deployment.yaml"
-                    sed -i 's|replaceImageTag|'"${BUILD_NUMBER}"'|g' deployment.yaml
-                    cat deployment.yaml
+                    echo "deployment.yml"
+                    sed -i 's|replaceImageTag|'"${BUILD_NUMBER}"'|g' deployment.yml
+                    cat deployment.yml
                     git config --global user.email "kpsafwan10@gmail.com"
                     git config --global user.name "Jenkins"
-                    git add deployment.yaml
+                    git add deployment.yml
                     git commit -m 'Updated the deploy yaml | Jenkins Pipeline'
                     git remote -v
                     git push https://ezio7223:${GITHUB_TOKEN}@github.com/ezio7223/django-dockker HEAD:main

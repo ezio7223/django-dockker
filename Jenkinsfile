@@ -34,13 +34,9 @@ pipeline {
         }
 
         stage('Update deployment file'){
-            environment {
-            GIT_REPO_NAME = ""
-            GIT_USER_NAME = "ezio7223"
-            }
             steps {
                 script{
-                    withCredentials([usernamePassword(credentialsId: 'f87a34a8-0e09-45e7-b9cf-6dc68feac670', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                    withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                     sh '''
                     cat deployment.yaml
                     sed -i '' "s/32/${BUILD_NUMBER}/g" deployment.yaml

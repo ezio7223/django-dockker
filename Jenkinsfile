@@ -20,6 +20,7 @@ pipeline {
                     echo 'Buid Docker Image'
                     docker build -t ezio7223/pythontest-django-app:${BUILD_NUMBER} .
                     '''
+                    }
                 }
             }
         }

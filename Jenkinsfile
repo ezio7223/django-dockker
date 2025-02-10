@@ -6,8 +6,7 @@ pipeline {
     stages {
         stage('Checkout'){
            steps {
-                url: 'https://github.com/ezio7223/django-dockker',
-                branch: 'main'
+                git branch: 'main', url: 'https://github.com/ezio7223/django-dockker.git'
            }
         }
 

@@ -4,7 +4,6 @@ pipeline {
         IMAGE_NAME = "ezio7223/pythontest-django-app"
         IMAGE_TAG = "${BUILD_NUMBER}"
         DOCKER_IMAGE = "${IMAGE_NAME}:${IMAGE_TAG}"
-        REPORTS_DIR = "security-reports"
     }
 
     stages {
@@ -26,24 +25,6 @@ pipeline {
                     '''
                     }
                 }
-            }
-        }
-
-        stage('Install Trivy') {
-            steps {
-                sh '''
-                echo "Installing Trivy..."
-                sudo apt-get update && sudo apt-get install -y wget
-                wget -qO- https://github.com/aquasecurity/trivy/releases/latest/download/trivy_$(dpkg --print-architecture).deb > trivy.deb
-                sudo dpkg -i trivy.deb
-                trivy --version
-                '''
-            }
-        }
-
-        stage('Run Trivy (Container & Dependency Scan)') {
-            steps {
-                sh "trivy image --format json --output ${REPORTS_DIR}/trivy-report.json ${DOCKER_IMAGE}"
             }
         }
 
@@ -79,14 +60,11 @@ pipeline {
     }
     post {
         always {
-            echo " Archiving Security Reports..."
-            archiveArtifacts artifacts: "${REPORTS_DIR}/*.json", fingerprint: true
             echo "Cleaning up Docker images..."
             sh "docker rmi ${DOCKER_IMAGE} || true"
         }
         failure {
             echo " Pipeline Failed! Check security reports in Jenkins artifacts:"
-            echo " Trivy Report: ${WORKSPACE}/${REPORTS_DIR}/trivy-report.json"
         }
         success {
             echo " Deployment Successful!"

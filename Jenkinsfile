@@ -29,12 +29,21 @@ pipeline {
             }
         }
 
+        stage('Install Trivy') {
+            steps {
+                sh '''
+                echo "Installing Trivy..."
+                sudo apt-get update && sudo apt-get install -y wget
+                wget -qO- https://github.com/aquasecurity/trivy/releases/latest/download/trivy_$(dpkg --print-architecture).deb > trivy.deb
+                sudo dpkg -i trivy.deb
+                trivy --version
+                '''
+            }
+        }
+
         stage('Run Trivy (Container & Dependency Scan)') {
             steps {
-                sh 'docker pull aquasec/trivy'
-                sh "mkdir -p ${REPORTS_DIR}"
                 sh "trivy image --format json --output ${REPORTS_DIR}/trivy-report.json ${DOCKER_IMAGE}"
-                sh 'trivy image --severity HIGH,CRITICAL ${DOCKER_IMAGE} || echo "️ Security vulnerabilities found, check reports!"'
             }
         }
 
